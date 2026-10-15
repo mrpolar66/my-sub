@@ -1,0 +1,517 @@
+{
+"dns" : {
+"disableFallbackIfMatch" : true,
+"hosts" : {
+"cloudflare-dns.com" : [
+"cloudflare.com"
+]
+},
+"queryStrategy" : "UseIP",
+"servers" : [
+{
+"address" : "https://cloudflare-dns.com/dns-query",
+"tag" : "remote-dns"
+},
+{
+"address" : "8.8.8.8",
+"domains" : [
+"geosite:category-ir"
+],
+"expectIPs" : [
+"geoip:ir"
+]
+},
+{
+"address" : "8.8.8.8",
+"domains" : [
+"full:cloudflare.com"
+]
+}
+],
+"tag" : "dns"
+},
+"inbounds" : [
+{
+"listen" : "127.0.0.1",
+"port" : 50798,
+"protocol" : "socks",
+"settings" : {
+"auth" : "noauth",
+"udp" : true,
+"userLevel" : 8
+},
+"sniffing" : {
+"destOverride" : [
+"tls",
+"http",
+"quic"
+],
+"enabled" : true,
+"metadataOnly" : false,
+"routeOnly" : true
+},
+"tag" : "socks"
+},
+{
+"listen" : "127.0.0.1",
+"port" : 50799,
+"protocol" : "socks",
+"settings" : {
+"auth" : "noauth",
+"udp" : true,
+"userLevel" : 8
+},
+"tag" : "directSocks"
+}
+],
+"log" : {
+"access" : "/private/var/mobile/Containers/Shared/AppGroup/CBC4B3C4-54F1-48D1-9F7A-9F1CBCA69FE8/access.log",
+"dnsLog" : true,
+"error" : "/private/var/mobile/Containers/Shared/AppGroup/CBC4B3C4-54F1-48D1-9F7A-9F1CBCA69FE8/error.log",
+"loglevel" : "none"
+},
+"outbounds" : [
+{
+"protocol" : "freedom",
+"settings" : {
+"fragment" : {
+"interval" : "1-1",
+"length" : "100-200",
+"packets" : "tlshello"
+}
+},
+"streamSettings" : {
+"sockopt" : {
+"domainStrategy" : "UseIP",
+"happyEyeballs" : {
+"interleave" : 2,
+"maxConcurrentTry" : 4,
+"prioritizeIPv6" : false,
+"tryDelayMs" : 250
+},
+"tcpFastOpen" : true
+}
+},
+"tag" : "proxy"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"fragment" : {
+"interval" : "1-1",
+"length" : "100-200",
+"packets" : "1-1"
+}
+},
+"streamSettings" : {
+"sockopt" : {
+"domainStrategy" : "UseIP",
+"happyEyeballs" : {
+"interleave" : 2,
+"maxConcurrentTry" : 4,
+"prioritizeIPv6" : false,
+"tryDelayMs" : 250
+},
+"tcpFastOpen" : true
+}
+},
+"tag" : "http-fragment"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"domainStrategy" : "UseIPv4v6",
+"noises" : [
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+}
+]
+},
+"tag" : "udp-noise"
+},
+{
+"protocol" : "dns",
+"tag" : "dns-out"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"domainStrategy" : "UseIP"
+},
+"tag" : "direct"
+},
+{
+"protocol" : "blackhole",
+"settings" : {
+"response" : {
+"type" : "http"
+}
+},
+"tag" : "block"
+}
+],
+"policy" : {
+"levels" : {
+"8" : {
+"bufferSize" : 0,
+"connIdle" : 30,
+"downlinkOnly" : 1,
+"handshake" : 4,
+"statsUserDownlink" : false,
+"statsUserUplink" : false,
+"uplinkOnly" : 1
+}
+},
+"system" : {
+"statsOutboundDownlink" : true,"statsOutboundUplink" : true
+}
+},
+"remarks" : "Ghotbi_01_fragment ",
+"routing" : {
+"domainStrategy" : "IPIfNonMatch",
+"rules" : [
+{
+"inboundTag" : "mixed-in",
+"outboundTag" : "dns-out",
+"port" : "53",
+"type" : "field"
+},
+{
+"inboundTag" : "dns-in",
+"outboundTag" : "dns-out",
+"type" : "field"
+},
+{
+"inboundTag" : "remote-dns",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"inboundTag" : "dns",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"domain" : "geosite:category-ir",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"ip" : "geoip:ir",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"network" : "tcp",
+"outboundTag" : "proxy",
+"protocol" : "tls",
+"type" : "field"
+},
+{
+"network" : "tcp",
+"outboundTag" : "http-fragment",
+"protocol" : "http",
+"type" : "field"
+},
+{
+"network" : "udp",
+"outboundTag" : "udp-noise",
+"protocol" : "quic",
+"type" : "field"
+},
+{
+"network" : "udp",
+"outboundTag" : "udp-noise",
+"port" : "443,2053,2083,2087,2096,8443",
+"type" : "field"
+},
+{
+"network" : "tcp,udp",
+"outboundTag" : "direct",
+"type" : "field"
+}
+]
+},
+"stats" : {
+
+}
+}
+
+
+{
+"dns" : {
+"disableFallbackIfMatch" : true,
+"hosts" : {
+"dns.google" : [
+"8.8.8.8",
+"8.8.4.4"
+]
+},
+"queryStrategy" : "UseIP",
+"servers" : [
+{
+"address" : "https://dns.google/dns-query",
+"tag" : "remote-dns"
+},
+{
+"address" : "8.8.8.8",
+"domains" : [
+"geosite:category-ir"
+],
+"expectIPs" : [
+"geoip:ir"
+]
+}
+],
+"tag" : "dns"
+},
+"inbounds" : [
+{
+"listen" : "127.0.0.1",
+"port" : 50810,
+"protocol" : "socks",
+"settings" : {
+"auth" : "noauth",
+"udp" : true,
+"userLevel" : 8
+},
+"sniffing" : {
+"destOverride" : [
+"tls",
+"http",
+"quic"
+],
+"enabled" : true,
+"metadataOnly" : false,
+"routeOnly" : true
+},
+"tag" : "socks"
+},
+{
+"listen" : "127.0.0.1",
+"port" : 50811,
+"protocol" : "socks",
+"settings" : {
+"auth" : "noauth",
+"udp" : true,
+"userLevel" : 8
+},
+"tag" : "directSocks"
+}
+],
+"log" : {
+"access" : "/private/var/mobile/Containers/Shared/AppGroup/CBC4B3C4-54F1-48D1-9F7A-9F1CBCA69FE8/access.log",
+"dnsLog" : true,
+"error" : "/private/var/mobile/Containers/Shared/AppGroup/CBC4B3C4-54F1-48D1-9F7A-9F1CBCA69FE8/error.log",
+"loglevel" : "none"
+},
+"outbounds" : [
+{
+"protocol" : "freedom",
+"settings" : {
+"fragment" : {
+"interval" : "1-1",
+"length" : "100-200",
+"packets" : "tlshello"
+}
+},
+"streamSettings" : {
+"sockopt" : {
+"domainStrategy" : "UseIP",
+"happyEyeballs" : {
+"interleave" : 2,
+"maxConcurrentTry" : 4,
+"prioritizeIPv6" : false,
+"tryDelayMs" : 250
+},
+"tcpFastOpen" : true
+}
+},
+"tag" : "proxy"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"fragment" : {
+"interval" : "1-1",
+"length" : "100-200",
+"packets" : "1-1"
+}
+},
+"streamSettings" : {
+"sockopt" : {
+"domainStrategy" : "UseIP",
+"happyEyeballs" : {
+"interleave" : 2,
+"maxConcurrentTry" : 4,
+"prioritizeIPv6" : false,
+"tryDelayMs" : 250
+},
+"tcpFastOpen" : true
+}
+},
+"tag" : "http-fragment"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"domainStrategy" : "UseIPv4v6",
+"noises" : [
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+},
+{
+"delay" : "1-1",
+"packet" : "50-100",
+"type" : "rand"
+}
+]
+},
+"tag" : "udp-noise"
+},
+{
+"protocol" : "dns",
+"tag" : "dns-out"
+},
+{
+"protocol" : "freedom",
+"settings" : {
+"domainStrategy" : "UseIP"
+},
+"tag" : "direct"
+},
+{
+"protocol" : "blackhole",
+"settings" : {
+"response" : {
+"type" : "http"
+}
+},
+"tag" : "block"
+}
+],
+"policy" : {
+"levels" : {
+"8" : {
+"bufferSize" : 0,
+"connIdle" : 30,
+"downlinkOnly" : 1,
+"handshake" : 4,
+"statsUserDownlink" : false,
+"statsUserUplink" : false,
+"uplinkOnly" : 1
+}
+},
+"system" : {
+"statsOutboundDownlink" : true,
+"statsOutboundUplink" : true
+}
+},
+"remarks" : "Ghotbi_02_fragment ",
+"routing" : {"domainStrategy" : "IPIfNonMatch",
+"rules" : [
+{
+"inboundTag" : "mixed-in",
+"outboundTag" : "dns-out",
+"port" : "53",
+"type" : "field"
+},
+{
+"inboundTag" : "dns-in",
+"outboundTag" : "dns-out",
+"type" : "field"
+},
+{
+"inboundTag" : "remote-dns",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"inboundTag" : "dns",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"domain" : "geosite:category-ir",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"ip" : "geoip:ir",
+"outboundTag" : "direct",
+"type" : "field"
+},
+{
+"network" : "tcp",
+"outboundTag" : "proxy",
+"protocol" : "tls",
+"type" : "field"
+},
+{
+"network" : "tcp",
+"outboundTag" : "http-fragment",
+"protocol" : "http",
+"type" : "field"
+},
+{
+"network" : "udp",
+"outboundTag" : "udp-noise",
+"protocol" : "quic",
+"type" : "field"
+},
+{
+"network" : "udp",
+"outboundTag" : "udp-noise",
+"port" : "443,2053,2083,2087,2096,8443",
+"type" : "field"
+},
+{
+"network" : "tcp,udp",
+"outboundTag" : "direct",
+"type" : "field"
+}
+]
+},
+"stats" : {
+
+}
+}
